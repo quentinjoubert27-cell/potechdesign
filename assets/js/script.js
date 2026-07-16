@@ -116,11 +116,9 @@ class StickyGridScroll {
       scrollTrigger: {
         trigger: this.block,
         start: 'top 25%', end: 'bottom bottom', scrub: 1,
-        onLeave:     () => this.showContent(false),
         onLeaveBack: () => this.showContent(false),
         onUpdate: (self) => {
-          // apparaît seulement dans les 15% finaux de l'animation
-          if (self.progress >= 0.85) {
+          if (self.progress >= 0.7) {
             this.showContent(true);
           } else {
             this.showContent(false);
