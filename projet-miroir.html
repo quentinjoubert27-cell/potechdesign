@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Le Miroir | Po Tech Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .proj-hero {
+      position: relative;
+      height: 90vh;
+      overflow: hidden;
+    }
+    .proj-hero img {
+      width: 100%; height: 100%; object-fit: cover;
+      transform-origin: center;
+    }
+    .proj-hero-caption {
+      position: absolute;
+      bottom: 3rem; left: 5vw;
+      color: #fff;
+    }
+    .proj-hero-caption .label { color: rgba(255,255,255,0.7); margin-bottom: 0.75rem; }
+    .proj-hero-caption h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .proj-intro {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 5rem 5vw;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .proj-intro-desc p {
+      font-size: 1.1rem;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+    .proj-intro-infos {
+      display: flex;
+      flex-direction: column;
+    }
+    .proj-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .proj-info-row:first-child { border-top: 1px solid var(--border); }
+    .proj-info-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .proj-info-val { color: var(--text); font-weight: 400; }
+
+    .proj-gallery {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 5vw 5rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 2px;
+    }
+    .proj-gallery-img {
+      overflow: hidden;
+      background: var(--border);
+    }
+    .proj-gallery-img:first-child {
+      grid-row: span 2;
+    }
+    .proj-gallery-img img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.7s ease;
+    }
+    .proj-gallery-img:hover img { transform: scale(1.04); }
+    .proj-gallery-img:first-child { aspect-ratio: unset; }
+    .proj-gallery-img:not(:first-child) { aspect-ratio: 4/3; }
+
+    .proj-next {
+      border-top: 1px solid var(--border);
+      padding: 5rem 5vw;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .proj-next-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    .proj-next-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+    }
+    .proj-next-title em { font-style: italic; color: var(--accent); }
+    .proj-next-arrow {
+      font-size: 2.5rem;
+      color: var(--accent);
+      transition: transform 0.25s;
+    }
+    .proj-next:hover .proj-next-arrow { transform: translateX(8px); }
+
+    @media (max-width: 768px) {
+      .proj-intro { grid-template-columns: 1fr; gap: 3rem; padding: 3rem 2rem; }
+      .proj-gallery { grid-template-columns: 1fr; padding: 0 2rem 3rem; }
+      .proj-gallery-img:first-child { grid-row: span 1; aspect-ratio: 4/3; }
+      .proj-next { padding: 3rem 2rem; flex-direction: column; align-items: flex-start; gap: 2rem; }
+      .proj-hero-caption { left: 2rem; bottom: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav nav--light" id="nav" style="background: transparent; border-bottom: none; transition: background 0.3s, border-color 0.3s;">
+    <a href="index.html" class="nav-logo">
+      <img class="nav-logo-svg" src="Image_19-06-2026_à_10.10-removebg-preview.png" alt="Po Tech Design">
+      <span class="nav-logo-text">Po Tech Design</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="projets.html" class="nav-active">Projets</a>
+      <a href="prestations.html">Prestations</a>
+      <a href="actualites.html">Actualités</a>
+      <a href="contact.html" class="nav-cta">Contact →</a>
+    </nav>
+    <button class="nav-burger" aria-label="Menu"><span></span><span></span></button>
+  </header>
+
+  <section class="proj-hero">
+    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=2000&q=90" alt="Restaurant Le Miroir" id="hero-img">
+    <div class="proj-hero-caption">
+      <p class="label">Commerce</p>
+      <h1>Restaurant Le Miroir</h1>
+    </div>
+  </section>
+
+  <section class="proj-intro">
+    <div class="proj-intro-desc">
+      <p>Conception de l'identité intérieure d'un restaurant gastronomique dans le quartier Saint-Pierre. Le projet joue sur les reflets, les matières et une ambiance tamisée pour créer une expérience immersive. Boiseries sombres, cuivre brossé, laiton et velours composent une atmosphère intime et raffinée.</p>
+    </div>
+    <div class="proj-intro-infos">
+      <div class="proj-info-row"><span class="proj-info-label">Lieu</span><span class="proj-info-val">Bordeaux</span></div>
+      <div class="proj-info-row"><span class="proj-info-label">Surface</span><span class="proj-info-val">110 m²</span></div>
+      <div class="proj-info-row"><span class="proj-info-label">Année</span><span class="proj-info-val">2024</span></div>
+      <div class="proj-info-row"><span class="proj-info-label">Prestation</span><span class="proj-info-val">Conception + Mobilier + Suivi</span></div>
+      <div class="proj-info-row"><span class="proj-info-label">Durée</span><span class="proj-info-val">7 mois</span></div>
+      <div class="proj-info-row"><span class="proj-info-label">Couverts</span><span class="proj-info-val">48</span></div>
+      <div class="proj-info-row"><span class="proj-info-label">Livraison</span><span class="proj-info-val">Octobre 2024</span></div>
+      
+    </div>
+  </section>
+
+  <div class="proj-gallery">
+    <div class="proj-gallery-img"><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=85" alt=""></div>
+    <div class="proj-gallery-img"><img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=1200&q=85" alt=""></div>
+    <div class="proj-gallery-img"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200&q=85" alt=""></div>
+    
+  </div>
+
+  <a href="projet-bastide.html" class="proj-next">
+    <div>
+      <span class="proj-next-label">Projet suivant</span>
+      <div class="proj-next-title"><em>Loft Bastide</em></div>
+    </div>
+    <span class="proj-next-arrow">→</span>
+  </a>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p class="footer-logo">Po Tech Design</p>
+        <p>Cabinet d'Architecture d'Intérieur<br>Bordeaux, France</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <p class="footer-col-title">Cabinet</p>
+          <a href="index.html">Accueil</a>
+          <a href="projets.html">Projets</a>
+          <a href="prestations.html">Prestations</a>
+          <a href="actualites.html">Actualités</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Contact</p>
+          <a href="contact.html">Nous contacter</a>
+          <a href="mailto:contact@potech-design.com">contact@potech-design.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Bordeaux, France</span>
+      <span>© 2026 Po Tech Design</span>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY > 80;
+      nav.style.background = scrolled ? 'var(--bg)' : 'transparent';
+      nav.style.borderBottom = scrolled ? '1px solid var(--border)' : 'none';
+      nav.classList.toggle('scrolled', scrolled);
+    }, { passive: true });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="transitions.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from('#hero-img', { scale: 1.06, duration: 1.4, ease: 'power3.out' });
+    gsap.from('.proj-hero-caption', { opacity: 0, y: 30, duration: 1, delay: 0.3 });
+    gsap.from('.proj-intro-desc p', { opacity: 0, y: 30, duration: 0.9, ease: 'power2.out', scrollTrigger: { trigger: '.proj-intro', start: 'top 80%', once: true } });
+    gsap.from('.proj-info-row', { opacity: 0, y: 10, stagger: 0.07, duration: 0.5, scrollTrigger: { trigger: '.proj-intro-infos', start: 'top 85%', once: true } });
+    document.querySelectorAll('.proj-gallery-img').forEach((el, i) => {
+      gsap.from(el, { opacity: 0, y: 30, duration: 0.7, delay: i * 0.1, scrollTrigger: { trigger: '.proj-gallery', start: 'top 85%', once: true } });
+    });
+  </script>
+</body>
+</html>

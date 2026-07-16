@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prestations | Po Tech Design Bordeaux</title>
+  <meta name="description" content="Nos prestations : création d'espace, agencement sur mesure, suivi de chantier et conseil décoration à Bordeaux.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .prest-hero {
+      padding: 10rem 5vw 6rem;
+      border-bottom: 1px solid var(--border);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .prest-hero .label { margin-bottom: 1.5rem; }
+    .prest-hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      max-width: 700px;
+    }
+    .prest-hero h1 em { font-style: italic; color: var(--accent); }
+    .prest-hero p {
+      margin-top: 2rem;
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 420px;
+    }
+
+    .prest-list { max-width: 1400px; margin: 0 auto; }
+
+    .prest-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .prest-block:nth-child(even) .prest-img { order: 1; }
+    .prest-block:nth-child(even) .prest-content { order: 2; }
+
+    .prest-img {
+      position: relative;
+      min-height: 520px;
+      overflow: hidden;
+    }
+    .prest-img img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+    .prest-block:hover .prest-img img { transform: scale(1.04); }
+
+    .prest-content {
+      padding: 5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .prest-num {
+      font-family: var(--serif);
+      font-size: 5rem;
+      font-weight: 300;
+      line-height: 1;
+      color: var(--border);
+    }
+
+    .prest-content h2 {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 3vw, 3rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-top: 0.5rem;
+    }
+    .prest-content h2 em { font-style: italic; color: var(--accent); }
+
+    .prest-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.3rem 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .prest-desc {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 440px;
+    }
+
+    .prest-ul { list-style: none; }
+    .prest-ul li {
+      font-size: 0.88rem;
+      color: var(--text);
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .prest-ul li:first-child { border-top: 1px solid var(--border); }
+    .prest-ul li::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .prest-cta {
+      padding: 8rem 5vw;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .prest-cta h2 {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .prest-cta h2 em { font-style: italic; color: var(--accent); }
+    .prest-cta p {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      max-width: 380px;
+    }
+
+    @media (max-width: 900px) {
+      .prest-block { grid-template-columns: 1fr; }
+      .prest-block:nth-child(even) .prest-img,
+      .prest-block:nth-child(even) .prest-content { order: unset; }
+      .prest-img { min-height: 300px; }
+      .prest-content { padding: 3rem 2rem; }
+      .prest-cta { grid-template-columns: 1fr; gap: 2rem; padding: 5rem 2rem; }
+      .prest-hero { padding: 7rem 2rem 4rem; }
+    }
+    @media (max-width: 480px) {
+      .prest-content { padding: 2.5rem 1.5rem; }
+      .prest-hero { padding: 6rem 1.5rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav nav--light" id="nav">
+    <a href="index.html" class="nav-logo">
+      <img class="nav-logo-svg" src="Image_19-06-2026_à_10.10-removebg-preview.png" alt="Po Tech Design">
+      <span class="nav-logo-text">Po Tech Design</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="projets.html">Projets</a>
+      <a href="prestations.html" class="nav-active">Prestations</a>
+      <a href="actualites.html">Actualités</a>
+      <a href="contact.html" class="nav-cta">Contact →</a>
+    </nav>
+    <button class="nav-burger" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <section class="prest-hero">
+    <p class="label">Nos prestations</p>
+    <h1>Ce que nous<br><em>faisons.</em></h1>
+    <p>Du premier rendez-vous jusqu'à la remise des clés, nous intervenons à chaque étape de votre projet.</p>
+  </section>
+
+  <div class="prest-list">
+
+    <div class="prest-block">
+      <div class="prest-img">
+        <img src="https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?w=1000&q=85" alt="Création d'espace">
+      </div>
+      <div class="prest-content">
+        <div>
+          <span class="prest-num">01</span>
+          <h2>Création<br><em>d'espace</em></h2>
+          <span class="prest-tag">Résidentiel & tertiaire</span>
+        </div>
+        <p class="prest-desc">Nous repensons la distribution, les volumes et la lumière pour créer un intérieur qui correspond à votre mode de vie. Plans, matériaux, éclairage : tout est défini avant que les travaux commencent.</p>
+        <ul class="prest-ul">
+          <li>Relevé et état des lieux</li>
+          <li>Plans 2D et vues 3D</li>
+          <li>Redistribution des volumes</li>
+          <li>Choix des matériaux et de l'éclairage</li>
+          <li>Planches ambiance</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prest-block">
+      <div class="prest-img">
+        <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1000&q=85" alt="Agencement sur mesure">
+      </div>
+      <div class="prest-content">
+        <div>
+          <span class="prest-num">02</span>
+          <h2>Agencement<br><em>& mobilier</em></h2>
+          <span class="prest-tag">Sur mesure</span>
+        </div>
+        <p class="prest-desc">Meubles et rangements conçus à vos dimensions exactes pour maximiser chaque mètre carré. Idéal pour les configurations atypiques ou les espaces contraints.</p>
+        <ul class="prest-ul">
+          <li>Étude d'agencement complète</li>
+          <li>Menuiseries et rangements sur mesure</li>
+          <li>Sélection de mobilier</li>
+          <li>Coordination avec les artisans</li>
+          <li>Suivi de la pose</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prest-block">
+      <div class="prest-img">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1000&q=85" alt="Suivi de chantier">
+      </div>
+      <div class="prest-content">
+        <div>
+          <span class="prest-num">03</span>
+          <h2>Suivi<br><em>de chantier</em></h2>
+          <span class="prest-tag">De A à Z</span>
+        </div>
+        <p class="prest-desc">Coordination complète des travaux : sélection des artisans, planning, visites de chantier et réception finale. Un seul interlocuteur, à chaque étape.</p>
+        <ul class="prest-ul">
+          <li>Analyse et consultation des devis</li>
+          <li>Planning d'intervention</li>
+          <li>Visites de chantier régulières</li>
+          <li>Gestion des imprévus</li>
+          <li>Réception des travaux</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prest-block">
+      <div class="prest-img">
+        <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1000&q=85" alt="Conseil décoration">
+      </div>
+      <div class="prest-content">
+        <div>
+          <span class="prest-num">04</span>
+          <h2>Conseil<br><em>& décoration</em></h2>
+          <span class="prest-tag">À la carte</span>
+        </div>
+        <p class="prest-desc">Vous avez une direction mais vous voulez un regard professionnel. Couleurs, matières, textiles, luminaires : on affine vos choix pour un résultat cohérent.</p>
+        <ul class="prest-ul">
+          <li>Conseil en couleurs et matières</li>
+          <li>Sélection de textiles</li>
+          <li>Conseil en luminaires</li>
+          <li>Mise en scène et styling</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <section class="prest-cta">
+    <h2>Un projet<br><em>en tête ?</em></h2>
+    <div>
+      <p>Parlez-nous de votre projet. On vous répond sous 48h.</p>
+      <a href="contact.html" class="btn-primary">Nous contacter →</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p class="footer-logo">Po Tech Design</p>
+        <p>Cabinet d'Architecture d'Intérieur<br>Bordeaux, France</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <p class="footer-col-title">Cabinet</p>
+          <a href="index.html">Accueil</a>
+          <a href="projets.html">Projets</a>
+          <a href="prestations.html">Prestations</a>
+          <a href="actualites.html">Actualités</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Contact</p>
+          <a href="contact.html">Nous contacter</a>
+          <a href="mailto:contact@potech-design.com">contact@potech-design.com</a>
+          <a href="tel:+33642899858">+33 6 42 89 98 58</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Suivre</p>
+          <a href="#">Instagram</a>
+          <a href="#">Pinterest</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Bordeaux, France</span>
+      <span>© 2026 Po Tech Design</span>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="page-animations.js"></script>
+  <script src="transitions.js"></script>
+
+</body>
+</html>

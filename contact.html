@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Po Tech Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── PAGE CONTACT ── */
+    .contact-hero {
+      padding: 10rem 3rem 5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-hero .label { margin-bottom: 1.5rem; }
+    .contact-hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 6vw, 6rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      max-width: 700px;
+    }
+    .contact-hero h1 em { font-style: italic; color: var(--accent); }
+
+    .contact-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 70vh;
+    }
+
+    /* Colonne gauche */
+    .contact-info {
+      padding: 5rem 3rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 4rem;
+    }
+    .contact-info-block h3 {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .contact-info-block p,
+    .contact-info-block a {
+      font-family: var(--serif);
+      font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.6;
+      text-decoration: none;
+    }
+    .contact-info-block a:hover { color: var(--accent); }
+    .contact-info-block .contact-link {
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .contact-hours {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .contact-hours-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.875rem;
+      color: var(--muted);
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-hours-row:last-child { border-bottom: none; }
+
+    /* Colonne droite */
+    .contact-form-wrap {
+      padding: 5rem 3rem;
+    }
+    .contact-form-wrap h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      font-weight: 300;
+      margin-bottom: 3rem;
+      line-height: 1.2;
+    }
+    .contact-form-wrap h2 em { font-style: italic; color: var(--accent); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .form-field.full { grid-column: 1 / -1; }
+
+    .form-field label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      font-family: var(--sans);
+      font-size: 0.9375rem;
+      color: var(--text);
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 0;
+      outline: none;
+      transition: border-color 0.25s, transform 0.2s;
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .form-field input:hover,
+    .form-field select:hover,
+    .form-field textarea:hover {
+      border-color: rgba(28, 24, 20, 0.3);
+    }
+    .form-field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a847c' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0 center;
+      padding-right: 1.5rem;
+      cursor: pointer;
+    }
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-field textarea {
+      resize: none;
+      height: 120px;
+      line-height: 1.6;
+    }
+    .form-field input::placeholder,
+    .form-field textarea::placeholder { color: rgba(28,24,20,0.3); }
+
+    .form-submit {
+      margin-top: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .form-submit .btn-primary { flex-shrink: 0; }
+    .form-submit p {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Bande localisation */
+    .contact-location {
+      padding: 3rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .contact-location p {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--muted);
+    }
+    .contact-location strong { color: var(--text); font-weight: 400; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .contact-hero { padding: 6rem 1.5rem 2.5rem; }
+      .contact-body { grid-template-columns: 1fr; }
+      .contact-info { border-right: none; border-bottom: 1px solid var(--border); padding: 2.5rem 1.5rem; gap: 2.5rem; }
+      .contact-form-wrap { padding: 2.5rem 1.5rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-field.full { grid-column: 1; }
+      .contact-location { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 2rem 1.5rem; }
+      .form-submit { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    }
+    @media (max-width: 480px) {
+      .contact-hours-row { font-size: 0.8125rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav nav--light" id="nav">
+    <a href="index.html" class="nav-logo">
+      <img class="nav-logo-svg" src="Image_19-06-2026_à_10.10-removebg-preview.png" alt="Po Tech Design">
+      <span class="nav-logo-text">Po Tech Design</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="index.html#projets">Projets</a>
+      <a href="index.html#prestations">Prestations</a>
+      <a href="actualites.html">Actualités</a>
+      <a href="contact.html" class="nav-cta nav-active">Contact →</a>
+    </nav>
+    <button class="nav-burger" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <!-- HERO -->
+  <section class="contact-hero">
+    <p class="label">Contact</p>
+    <h1>Parlons de votre<br><em>projet.</em></h1>
+  </section>
+
+  <!-- CORPS -->
+  <div class="contact-body">
+
+    <!-- INFOS -->
+    <div class="contact-info">
+
+      <div class="contact-info-block">
+        <h3>Adresse</h3>
+        <p>76 rue Mandron<br>33000 Bordeaux</p>
+      </div>
+
+      <div class="contact-info-block">
+        <h3>Nous joindre</h3>
+        <a href="mailto:contact@potech-design.com" class="contact-link">contact@potech-design.com</a>
+        <a href="tel:+33642899858" class="contact-link">+33 6 42 89 98 58</a>
+      </div>
+
+      <div class="contact-info-block">
+        <h3>Horaires d'ouverture</h3>
+        <div class="contact-hours">
+          <div class="contact-hours-row"><span>Lundi au Vendredi</span><span>9h – 18h</span></div>
+          <div class="contact-hours-row"><span>Samedi</span><span>Sur rendez-vous</span></div>
+          <div class="contact-hours-row"><span>Dimanche</span><span>Fermé</span></div>
+        </div>
+      </div>
+
+      <div class="contact-info-block">
+        <h3>Suivre le cabinet</h3>
+        <a href="#" class="contact-link">Instagram</a>
+        <a href="#" class="contact-link">Pinterest</a>
+        <a href="#" class="contact-link">LinkedIn</a>
+      </div>
+
+    </div>
+
+    <!-- FORMULAIRE -->
+    <div class="contact-form-wrap">
+      <h2>Décrivez-nous<br><em>votre projet.</em></h2>
+
+      <form class="form-grid" action="#" method="post" novalidate>
+
+        <div class="form-field">
+          <label for="prenom">Prénom</label>
+          <input type="text" id="prenom" name="prenom" placeholder="Marie" autocomplete="given-name">
+        </div>
+
+        <div class="form-field">
+          <label for="nom">Nom</label>
+          <input type="text" id="nom" name="nom" placeholder="Dupont" autocomplete="family-name">
+        </div>
+
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="marie@exemple.com" autocomplete="email">
+        </div>
+
+        <div class="form-field">
+          <label for="telephone">Téléphone</label>
+          <input type="tel" id="telephone" name="telephone" placeholder="+33 6 00 00 00 00" autocomplete="tel">
+        </div>
+
+        <div class="form-field full">
+          <label for="type">Type de projet</label>
+          <select id="type" name="type">
+            <option value="" disabled selected>Sélectionner…</option>
+            <option value="residentiel">Résidentiel (appartement / maison)</option>
+            <option value="tertiaire">Tertiaire (bureau / commerce)</option>
+            <option value="renovation">Rénovation complète</option>
+            <option value="decoration">Conseil & décoration</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+
+<div class="form-field full">
+          <label for="message">Votre message</label>
+          <textarea id="message" name="message" placeholder="Décrivez votre projet, vos envies, votre calendrier…"></textarea>
+        </div>
+
+        <div class="form-submit full">
+          <button type="submit" class="btn-primary">Envoyer →</button>
+          <p>Nous vous répondons sous 48 h ouvrées. Toutes vos données restent confidentielles.</p>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+
+  <!-- LOCALISATION -->
+  <div class="contact-location">
+    <p><strong>Po Tech Design</strong>, Cabinet d'Architecture d'Intérieur, Bordeaux</p>
+    <p>76 rue Mandron, 33000 Bordeaux, <a href="https://www.google.com/maps/search/76+rue+Mandron+Bordeaux" target="_blank" style="color:var(--accent)">Voir sur la carte →</a></p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p class="footer-logo">Po Tech Design</p>
+        <p>Cabinet d'Architecture d'Intérieur<br>Bordeaux, France</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <p class="footer-col-title">Cabinet</p>
+          <a href="index.html">Accueil</a>
+          <a href="index.html">Projets</a>
+          <a href="index.html">Prestations</a>
+          <a href="actualites.html">Actualités</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Contact</p>
+          <a href="contact.html">Nous contacter</a>
+          <a href="contact.html">Consultation</a>
+          <a href="mailto:contact@potech-design.com">contact@potech-design.com</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Suivre</p>
+          <a href="#">Instagram</a>
+          <a href="#">Pinterest</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Bordeaux, France</span>
+      <span>© 2024 Po Tech Design</span>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="page-animations.js"></script>
+  <script src="transitions.js"></script>
+</body>
+</html>
