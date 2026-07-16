@@ -439,16 +439,6 @@
       progressBar.style.width = `${Math.min(n, 100)}%`;
     }
 
-    function parseQuestion(reply) {
-      // Prend seulement la première occurrence de |||
-      const firstLine = reply.split('\n')[0].trim();
-      if (firstLine.includes('|||')) {
-        const [q, ex] = firstLine.split('|||');
-        return { question: q.trim(), example: ex ? ex.trim() : '' };
-      }
-      return { question: firstLine, example: '' };
-    }
-
     function parseMarkdown(text) {
       return text
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -511,9 +501,8 @@
           questionCount++;
           setProgress((questionCount / MAX_Q) * 90);
           qStepLabel.textContent = `Question ${questionCount}`;
-          const { question, example } = parseQuestion(reply);
-          qText.innerHTML = parseMarkdown(question);
-          qInput.placeholder = example || 'Votre réponse…';
+          qText.innerHTML = parseMarkdown(reply);
+          qInput.placeholder = 'Votre réponse…';
           qInput.value = '';
           showScreen('question');
           setTimeout(() => qInput.focus(), 400);
@@ -538,9 +527,8 @@
         questionCount = 1;
         setProgress(5);
         qStepLabel.textContent = 'Question 1';
-        const { question, example } = parseQuestion(data.reply);
-        qText.innerHTML = parseMarkdown(question);
-        qInput.placeholder = example || 'Votre réponse…';
+        qText.innerHTML = parseMarkdown(data.reply);
+        qInput.placeholder = 'Votre réponse…';
         qInput.value = '';
         showScreen('question');
         setTimeout(() => qInput.focus(), 400);
