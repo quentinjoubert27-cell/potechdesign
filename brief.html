@@ -7,523 +7,479 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
   <style>
-    /* ── BRIEF PAGE ── */
-    .brief-hero {
-      padding: 10rem 3rem 4rem;
-      border-bottom: 1px solid var(--border);
-      max-width: 900px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3ef;
+      --text: #1a1a18;
+      --muted: #8a8880;
+      --border: #e2dfd8;
+      --accent: #b5926a;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
     }
-    .brief-hero .label { margin-bottom: 1.5rem; }
-    .brief-hero h1 {
-      font-family: var(--serif);
-      font-size: clamp(2.8rem, 5vw, 5.5rem);
-      font-weight: 300;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      margin-bottom: 1.5rem;
-    }
-    .brief-hero h1 em { font-style: italic; color: var(--accent); }
-    .brief-hero p {
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
       font-family: var(--sans);
-      font-size: 1rem;
-      color: var(--muted);
-      max-width: 540px;
-      line-height: 1.7;
+      overflow: hidden;
     }
 
-    /* ── CHAT CONTAINER ── */
-    .brief-wrap {
-      display: grid;
-      grid-template-columns: 1fr 420px;
-      min-height: 80vh;
+    /* ── PROGRESS ── */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--text);
+      width: 0%;
+      transition: width 0.6s ease;
+      z-index: 100;
     }
 
-    /* ── CONVERSATION ── */
-    .chat-col {
-      padding: 3rem;
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-    }
-
-    #chat-messages {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      padding-bottom: 2rem;
-      min-height: 400px;
-    }
-
-    .msg {
-      display: flex;
-      gap: 1.2rem;
-      align-items: flex-start;
-      opacity: 0;
-      transform: translateY(12px);
-      animation: msgIn 0.4s ease forwards;
-    }
-
-    @keyframes msgIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .msg-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      flex-shrink: 0;
+    /* ── NAV ── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      padding: 1.5rem 2.5rem;
+      z-index: 50;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .nav-logo img {
+      height: 28px;
+      width: auto;
+    }
+
+    .nav-logo-text {
       font-family: var(--sans);
       font-size: 11px;
       font-weight: 500;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
     }
 
-    .msg--ai .msg-avatar {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    .msg--user .msg-avatar {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .msg--user {
-      flex-direction: row-reverse;
-    }
-
-    .msg-bubble {
-      max-width: 75%;
-      padding: 1.2rem 1.5rem;
-      border-radius: 2px;
-    }
-
-    .msg--ai .msg-bubble {
-      background: var(--surface);
-      border: 1px solid var(--border);
-    }
-
-    .msg--user .msg-bubble {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    .msg-bubble p {
+    .nav-close {
       font-family: var(--sans);
-      font-size: 0.9375rem;
-      line-height: 1.7;
-      margin: 0;
+      font-size: 0.8125rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+    .nav-close:hover { color: var(--text); }
+
+    /* ── SCREEN ── */
+    .screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 6rem 10vw 4rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(30px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
-    .msg--ai .msg-bubble p { color: var(--text); }
-    .msg--user .msg-bubble p { color: var(--bg); }
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
 
-    /* Typing indicator */
-    .typing-indicator {
+    .screen.exit {
+      opacity: 0;
+      transform: translateY(-30px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    /* ── QUESTION ── */
+    .q-step {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .q-text {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      max-width: 800px;
+      margin-bottom: 3rem;
+    }
+
+    .q-text em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    /* ── INPUT ── */
+    .q-input {
+      width: 100%;
+      max-width: 640px;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid var(--border);
+      padding: 0.75rem 0;
+      font-family: var(--serif);
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-weight: 300;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.3s;
+      caret-color: var(--accent);
+    }
+    .q-input:focus { border-color: var(--text); }
+    .q-input::placeholder { color: var(--border); }
+
+    /* ── ACTIONS ── */
+    .q-actions {
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 1rem 1.5rem;
-    }
-    .typing-indicator span {
-      width: 6px; height: 6px;
-      background: var(--muted);
-      border-radius: 50%;
-      animation: bounce 1.2s ease infinite;
-    }
-    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes bounce {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-6px); }
+      gap: 2rem;
+      margin-top: 2.5rem;
     }
 
-    /* Input */
-    .chat-input-wrap {
-      display: flex;
-      gap: 1rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border);
-    }
-
-    #chat-input {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.9rem 1.2rem;
-      font-family: var(--sans);
-      font-size: 0.9375rem;
-      color: var(--text);
-      resize: none;
-      min-height: 52px;
-      max-height: 140px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    #chat-input:focus { border-color: var(--text); }
-    #chat-input::placeholder { color: var(--muted); }
-
-    #chat-send {
+    .btn-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
       background: var(--text);
       color: var(--bg);
       border: none;
-      padding: 0 1.5rem;
+      padding: 0.9rem 2rem;
       font-family: var(--sans);
       font-size: 0.875rem;
       font-weight: 500;
       cursor: pointer;
       transition: opacity 0.2s;
-      white-space: nowrap;
     }
-    #chat-send:hover { opacity: 0.8; }
-    #chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-next:hover { opacity: 0.8; }
+    .btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* ── BRIEF PANEL ── */
-    .brief-col {
-      padding: 3rem;
-      position: sticky;
-      top: 80px;
-      align-self: flex-start;
-    }
-
-    .brief-col h3 {
+    .hint {
       font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-size: 0.8125rem;
       color: var(--muted);
-      margin-bottom: 2rem;
+    }
+    .hint kbd {
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      background: var(--border);
+      padding: 0.1em 0.4em;
+      border-radius: 2px;
     }
 
-    #brief-placeholder {
+    /* ── LOADING ── */
+    #screen-loading {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 300px;
-      gap: 1rem;
-      text-align: center;
-      color: var(--muted);
-    }
-    #brief-placeholder svg { opacity: 0.25; }
-    #brief-placeholder p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      line-height: 1.6;
-    }
-
-    #brief-content {
-      display: none;
-      flex-direction: column;
+      align-items: flex-start;
       gap: 1.5rem;
     }
 
-    .brief-field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      padding-bottom: 1.2rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .brief-field:last-child { border-bottom: none; }
-
-    .brief-field-label {
+    .loading-label {
       font-family: var(--sans);
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 500;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--muted);
     }
 
-    .brief-field-value {
+    .loading-dots {
+      display: flex;
+      gap: 8px;
+    }
+    .loading-dots span {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--text);
+      animation: ldot 1.2s ease infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes ldot {
+      0%, 60%, 100% { opacity: 0.15; transform: scale(0.8); }
+      30% { opacity: 1; transform: scale(1); }
+    }
+
+    /* ── BRIEF FINAL ── */
+    #screen-brief {
+      overflow-y: auto;
+      padding-top: 7rem;
+      padding-bottom: 4rem;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    .brief-header {
+      margin-bottom: 3rem;
+    }
+
+    .brief-header .q-step { margin-bottom: 1rem; }
+
+    .brief-header h2 {
       font-family: var(--serif);
-      font-size: 1.1rem;
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .brief-header h2 em { font-style: italic; color: var(--accent); }
+
+    .brief-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      max-width: 800px;
+      border-top: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+
+    .brief-item {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .brief-item:nth-child(odd) { padding-right: 3rem; }
+    .brief-item:nth-child(even) {
+      padding-left: 3rem;
+      border-left: 1px solid var(--border);
+    }
+
+    .brief-item-label {
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .brief-item-value {
+      font-family: var(--serif);
+      font-size: 1.15rem;
       font-weight: 300;
       color: var(--text);
       line-height: 1.5;
     }
 
-    .brief-actions {
+    .brief-resume {
+      max-width: 800px;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+
+    .brief-resume-label {
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .brief-resume p {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .brief-btns {
       display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      margin-top: 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
-    .brief-actions .btn-primary {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .btn-secondary {
-      display: block;
-      text-align: center;
-      padding: 0.8rem 1.5rem;
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.9rem 2rem;
       border: 1px solid var(--border);
       font-family: var(--sans);
       font-size: 0.875rem;
       color: var(--text);
-      cursor: pointer;
       background: none;
-      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
       text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .btn-secondary:hover { border-color: var(--text); background: var(--surface); }
+    .btn-outline:hover { border-color: var(--text); background: var(--bg); }
 
-    /* Progress */
-    .chat-progress {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 2rem;
-    }
-    .chat-progress-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--border);
-      transition: background 0.3s;
-    }
-    .chat-progress-dot.active { background: var(--text); }
-
-    /* Mobile */
-    @media (max-width: 768px) {
-      .brief-wrap { grid-template-columns: 1fr; }
-      .brief-col { display: none; }
-      .chat-col { padding: 1.5rem; }
-      .brief-hero { padding: 8rem 1.5rem 3rem; }
+    @media (max-width: 640px) {
+      .screen { padding: 5rem 6vw 3rem; }
+      .brief-grid { grid-template-columns: 1fr; }
+      .brief-item:nth-child(even) { padding-left: 0; border-left: none; }
+      .brief-item:nth-child(odd) { padding-right: 0; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <header class="nav nav--light" id="nav">
+  <div class="progress-bar" id="progress-bar"></div>
+
+  <nav class="nav">
     <a href="index.html" class="nav-logo">
-      <img class="nav-logo-svg" src="assets/img/logo.png" alt="Po Tech Design">
+      <img src="assets/img/logo.png" alt="Po Tech Design">
       <span class="nav-logo-text">Po Tech Design</span>
     </a>
-    <nav class="nav-links">
-      <a href="index.html">Accueil</a>
-      <a href="index.html#projets">Projets</a>
-      <a href="index.html#prestations">Prestations</a>
-      <a href="actualites.html">Actualités</a>
-      <a href="brief.html" class="nav-cta">Créer mon brief →</a>
-    </nav>
-    <button class="nav-burger" aria-label="Menu">
-      <span></span><span></span>
-    </button>
-  </header>
+    <a href="index.html" class="nav-close">Quitter ✕</a>
+  </nav>
 
-  <!-- HERO -->
-  <section class="brief-hero">
-    <p class="label">Outil IA</p>
-    <h1>Générez votre<br><em>brief de projet.</em></h1>
-    <p>Notre assistant vous pose des questions ciblées pour construire un brief précis. En 5 minutes, votre projet prend forme.</p>
-  </section>
-
-  <!-- INTERFACE -->
-  <div class="brief-wrap">
-
-    <!-- COLONNE CONVERSATION -->
-    <div class="chat-col">
-
-      <div class="chat-progress" id="chat-progress">
-        <div class="chat-progress-dot active"></div>
-        <div class="chat-progress-dot"></div>
-        <div class="chat-progress-dot"></div>
-        <div class="chat-progress-dot"></div>
-        <div class="chat-progress-dot"></div>
-        <div class="chat-progress-dot"></div>
-        <div class="chat-progress-dot"></div>
-        <div class="chat-progress-dot"></div>
-        <div class="chat-progress-dot"></div>
-        <div class="chat-progress-dot"></div>
-      </div>
-
-      <div id="chat-messages"></div>
-
-      <div class="chat-input-wrap">
-        <textarea id="chat-input" placeholder="Votre réponse…" rows="1"></textarea>
-        <button id="chat-send">Envoyer →</button>
-      </div>
+  <!-- ÉCRAN INTRO -->
+  <div class="screen active" id="screen-intro">
+    <p class="q-step">Générateur de brief</p>
+    <h1 class="q-text">Parlons de votre<br><em>projet.</em></h1>
+    <p style="font-family:var(--sans);font-size:0.9375rem;color:var(--muted);max-width:480px;line-height:1.7;margin-bottom:2.5rem;">
+      Je vais vous poser quelques questions pour construire un brief précis. Comptez 5 minutes.
+    </p>
+    <div class="q-actions">
+      <button class="btn-next" id="btn-start">Commencer →</button>
     </div>
-
-    <!-- COLONNE BRIEF -->
-    <div class="brief-col">
-      <h3>Votre brief</h3>
-
-      <div id="brief-placeholder">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="8" y="6" width="32" height="36" rx="2" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="14" y1="16" x2="34" y2="16" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="14" y1="22" x2="34" y2="22" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="14" y1="28" x2="26" y2="28" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-        <p>Votre brief apparaîtra ici<br>à la fin de la conversation.</p>
-      </div>
-
-      <div id="brief-content"></div>
-    </div>
-
   </div>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <p class="footer-logo">Po Tech Design</p>
-        <p>Cabinet d'Architecture d'Intérieur<br>Bordeaux, France</p>
-      </div>
-      <div class="footer-cols">
-        <div class="footer-col">
-          <p class="footer-col-title">Cabinet</p>
-          <a href="index.html">Accueil</a>
-          <a href="index.html#projets">Projets</a>
-          <a href="index.html#prestations">Prestations</a>
-          <a href="actualites.html">Actualités</a>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col-title">Contact</p>
-          <a href="contact.html">Nous contacter</a>
-          <a href="mailto:contact@potech-design.com">contact@potech-design.com</a>
-        </div>
-        <div class="footer-col">
-          <p class="footer-col-title">Suivre</p>
-          <a href="https://www.instagram.com/">Instagram</a>
-          <a href="https://www.pinterest.fr/">Pinterest</a>
-          <a href="https://www.linkedin.com/company/potechdesign">LinkedIn</a>
-        </div>
-      </div>
+  <!-- ÉCRAN QUESTION -->
+  <div class="screen" id="screen-question">
+    <p class="q-step" id="q-step-label">Question 1</p>
+    <p class="q-text" id="q-text">…</p>
+    <input class="q-input" type="text" id="q-input" placeholder="Votre réponse…" autocomplete="off">
+    <div class="q-actions">
+      <button class="btn-next" id="btn-send">Continuer →</button>
+      <span class="hint">ou <kbd>Entrée</kbd></span>
     </div>
-    <div class="footer-bottom">
-      <span>Bordeaux, France</span>
-      <span>© 2024 Po Tech Design</span>
+  </div>
+
+  <!-- ÉCRAN CHARGEMENT -->
+  <div class="screen" id="screen-loading">
+    <p class="loading-label">Po Tech Design analyse votre projet…</p>
+    <div class="loading-dots"><span></span><span></span><span></span></div>
+  </div>
+
+  <!-- ÉCRAN BRIEF FINAL -->
+  <div class="screen" id="screen-brief">
+    <div class="brief-header">
+      <p class="q-step">Votre brief</p>
+      <h2>Votre projet<br><em>en un coup d'œil.</em></h2>
     </div>
-  </footer>
+    <div class="brief-grid" id="brief-grid"></div>
+    <div class="brief-resume" id="brief-resume"></div>
+    <div class="brief-btns">
+      <a href="contact.html" class="btn-next">Envoyer ce brief →</a>
+      <button class="btn-outline" id="btn-copy">Copier</button>
+      <button class="btn-outline" id="btn-restart">Recommencer</button>
+    </div>
+  </div>
 
   <script>
-    window.addEventListener('scroll', () => {
-      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
-    }, { passive: true });
-
     const API_URL = 'https://halston-api.vercel.app/api/brief';
-    const messagesEl = document.getElementById('chat-messages');
-    const inputEl = document.getElementById('chat-input');
-    const sendBtn = document.getElementById('chat-send');
-    const briefContent = document.getElementById('brief-content');
-    const briefPlaceholder = document.getElementById('brief-placeholder');
-    const progressDots = document.querySelectorAll('.chat-progress-dot');
+
+    const screens = {
+      intro: document.getElementById('screen-intro'),
+      question: document.getElementById('screen-question'),
+      loading: document.getElementById('screen-loading'),
+      brief: document.getElementById('screen-brief'),
+    };
+
+    const progressBar = document.getElementById('progress-bar');
+    const qStepLabel = document.getElementById('q-step-label');
+    const qText = document.getElementById('q-text');
+    const qInput = document.getElementById('q-input');
+    const btnSend = document.getElementById('btn-send');
+    const btnStart = document.getElementById('btn-start');
 
     let history = [];
-    let exchangeCount = 0;
+    let questionCount = 0;
+    const MAX_Q = 10;
 
-    function addMessage(role, text) {
-      const msg = document.createElement('div');
-      msg.className = `msg msg--${role === 'assistant' ? 'ai' : 'user'}`;
-
-      const avatar = document.createElement('div');
-      avatar.className = 'msg-avatar';
-      avatar.textContent = role === 'assistant' ? 'AI' : 'Vous';
-
-      const bubble = document.createElement('div');
-      bubble.className = 'msg-bubble';
-      bubble.innerHTML = `<p>${text.replace(/\n/g, '<br>')}</p>`;
-
-      msg.appendChild(avatar);
-      msg.appendChild(bubble);
-      messagesEl.appendChild(msg);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function showTyping() {
-      const div = document.createElement('div');
-      div.className = 'msg msg--ai';
-      div.id = 'typing';
-      div.innerHTML = `
-        <div class="msg-avatar">AI</div>
-        <div class="msg-bubble">
-          <div class="typing-indicator"><span></span><span></span><span></span></div>
-        </div>`;
-      messagesEl.appendChild(div);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function removeTyping() {
-      document.getElementById('typing')?.remove();
-    }
-
-    function updateProgress() {
-      exchangeCount++;
-      progressDots.forEach((dot, i) => {
-        dot.classList.toggle('active', i < exchangeCount);
+    function showScreen(name) {
+      Object.entries(screens).forEach(([k, el]) => {
+        if (k === name) {
+          el.classList.remove('exit');
+          el.classList.add('active');
+        } else if (el.classList.contains('active')) {
+          el.classList.add('exit');
+          setTimeout(() => {
+            el.classList.remove('active', 'exit');
+          }, 350);
+        }
       });
+    }
+
+    function setProgress(n) {
+      progressBar.style.width = `${Math.min(n, 100)}%`;
+    }
+
+    function parseMarkdown(text) {
+      return text
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>');
     }
 
     function parseBrief(text) {
       const match = text.match(/---BRIEF---([\s\S]*?)---FIN BRIEF---/);
       if (!match) return null;
-
       const fields = [];
-      const lines = match[1].trim().split('\n');
-      lines.forEach(line => {
+      match[1].trim().split('\n').forEach(line => {
         const m = line.match(/\*\*(.+?)\s*:\*\*\s*(.+)/);
-        if (m) fields.push({ label: m[1], value: m[2].trim() });
+        if (m) fields.push({ label: m[1].trim(), value: m[2].trim() });
       });
       return fields;
     }
 
     function renderBrief(fields) {
-      briefPlaceholder.style.display = 'none';
-      briefContent.style.display = 'flex';
-      briefContent.innerHTML = '';
+      const grid = document.getElementById('brief-grid');
+      const resume = document.getElementById('brief-resume');
+      grid.innerHTML = '';
+      resume.innerHTML = '';
 
       fields.forEach(f => {
-        const div = document.createElement('div');
-        div.className = 'brief-field';
-        div.innerHTML = `
-          <span class="brief-field-label">${f.label}</span>
-          <span class="brief-field-value">${f.value}</span>`;
-        briefContent.appendChild(div);
+        if (f.label === 'Résumé') {
+          resume.innerHTML = `<p class="brief-resume-label">Résumé</p><p>${f.value}</p>`;
+        } else {
+          const div = document.createElement('div');
+          div.className = 'brief-item';
+          div.innerHTML = `<span class="brief-item-label">${f.label}</span><span class="brief-item-value">${f.value}</span>`;
+          grid.appendChild(div);
+        }
       });
 
-      const actions = document.createElement('div');
-      actions.className = 'brief-actions';
-      actions.innerHTML = `
-        <a href="contact.html" class="btn-primary">Envoyer ce brief →</a>
-        <button class="btn-secondary" onclick="copyBrief()">Copier le brief</button>`;
-      briefContent.appendChild(actions);
-    }
-
-    function copyBrief() {
-      const lines = [...document.querySelectorAll('.brief-field')].map(f => {
-        const label = f.querySelector('.brief-field-label').textContent;
-        const value = f.querySelector('.brief-field-value').textContent;
-        return `${label} : ${value}`;
-      }).join('\n');
-      navigator.clipboard.writeText(lines).then(() => {
-        const btn = document.querySelector('.btn-secondary');
-        btn.textContent = 'Copié !';
-        setTimeout(() => btn.textContent = 'Copier le brief', 2000);
-      });
+      showScreen('brief');
+      setProgress(100);
     }
 
     async function sendMessage(userText) {
-      if (!userText.trim()) return;
-
-      addMessage('user', userText);
       history.push({ role: 'user', content: userText });
-
-      inputEl.value = '';
-      inputEl.style.height = 'auto';
-      sendBtn.disabled = true;
-      showTyping();
+      showScreen('loading');
 
       try {
         const res = await fetch(API_URL, {
@@ -533,80 +489,86 @@
         });
         const data = await res.json();
 
-        removeTyping();
-
-        if (data.error) {
-          addMessage('assistant', 'Une erreur est survenue. Veuillez réessayer.');
-          sendBtn.disabled = false;
-          return;
-        }
+        if (data.error) throw new Error(data.error);
 
         const reply = data.reply;
         history.push({ role: 'assistant', content: reply });
 
-        const briefFields = parseBrief(reply);
-        if (briefFields) {
-          const cleanText = reply.replace(/---BRIEF---[\s\S]*?---FIN BRIEF---/, '').trim();
-          if (cleanText) addMessage('assistant', cleanText);
-          renderBrief(briefFields);
-          sendBtn.disabled = true;
-          inputEl.placeholder = 'Brief généré — consultez le panneau de droite';
+        const brief = parseBrief(reply);
+        if (brief) {
+          renderBrief(brief);
         } else {
-          addMessage('assistant', reply);
-          updateProgress();
-          sendBtn.disabled = false;
-          inputEl.focus();
+          questionCount++;
+          setProgress((questionCount / MAX_Q) * 90);
+          qStepLabel.textContent = `Question ${questionCount}`;
+          qText.innerHTML = parseMarkdown(reply);
+          qInput.value = '';
+          showScreen('question');
+          setTimeout(() => qInput.focus(), 400);
         }
       } catch (err) {
-        removeTyping();
-        addMessage('assistant', 'Connexion impossible. Vérifiez votre connexion et réessayez.');
-        sendBtn.disabled = false;
+        qText.innerHTML = 'Une erreur est survenue. Veuillez réessayer.';
+        showScreen('question');
       }
     }
 
-    // Init : premier message de l'IA
-    async function init() {
-      sendBtn.disabled = true;
-      showTyping();
+    async function startConversation() {
+      showScreen('loading');
       try {
         const res = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: [{ role: 'user', content: 'Commence la conversation.' }] }),
+          body: JSON.stringify({ messages: [{ role: 'user', content: 'Commence.' }] }),
         });
         const data = await res.json();
-        removeTyping();
-        if (data.reply) {
-          history.push({ role: 'assistant', content: data.reply });
-          addMessage('assistant', data.reply);
-        }
+        history.push({ role: 'assistant', content: data.reply });
+
+        questionCount = 1;
+        setProgress(5);
+        qStepLabel.textContent = 'Question 1';
+        qText.innerHTML = parseMarkdown(data.reply);
+        qInput.value = '';
+        showScreen('question');
+        setTimeout(() => qInput.focus(), 400);
       } catch {
-        removeTyping();
-        addMessage('assistant', 'Bonjour ! Je suis l\'assistant Po Tech Design. Quel type de projet souhaitez-vous réaliser ?');
+        showScreen('intro');
       }
-      sendBtn.disabled = false;
-      inputEl.focus();
     }
 
-    // Events
-    sendBtn.addEventListener('click', () => sendMessage(inputEl.value));
+    function handleSend() {
+      const val = qInput.value.trim();
+      if (!val) return;
+      sendMessage(val);
+    }
 
-    inputEl.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage(inputEl.value);
-      }
+    btnStart.addEventListener('click', startConversation);
+    btnSend.addEventListener('click', handleSend);
+
+    qInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); handleSend(); }
     });
 
-    inputEl.addEventListener('input', () => {
-      inputEl.style.height = 'auto';
-      inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
+    document.getElementById('btn-copy').addEventListener('click', () => {
+      const items = [...document.querySelectorAll('.brief-item')].map(el => {
+        const label = el.querySelector('.brief-item-label').textContent;
+        const value = el.querySelector('.brief-item-value').textContent;
+        return `${label} : ${value}`;
+      });
+      const resume = document.querySelector('#brief-resume p:last-child')?.textContent;
+      if (resume) items.push(`Résumé : ${resume}`);
+      navigator.clipboard.writeText(items.join('\n')).then(() => {
+        const btn = document.getElementById('btn-copy');
+        btn.textContent = 'Copié !';
+        setTimeout(() => btn.textContent = 'Copier', 2000);
+      });
     });
 
-    init();
+    document.getElementById('btn-restart').addEventListener('click', () => {
+      history = [];
+      questionCount = 0;
+      setProgress(0);
+      showScreen('intro');
+    });
   </script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="assets/js/transitions.js"></script>
 </body>
 </html>
