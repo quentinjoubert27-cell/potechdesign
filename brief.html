@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Brief — Po Tech Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ── BRIEF PAGE ── */
+    .brief-hero {
+      padding: 10rem 3rem 4rem;
+      border-bottom: 1px solid var(--border);
+      max-width: 900px;
+    }
+    .brief-hero .label { margin-bottom: 1.5rem; }
+    .brief-hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.8rem, 5vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .brief-hero h1 em { font-style: italic; color: var(--accent); }
+    .brief-hero p {
+      font-family: var(--sans);
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 540px;
+      line-height: 1.7;
+    }
+
+    /* ── CHAT CONTAINER ── */
+    .brief-wrap {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      min-height: 80vh;
+    }
+
+    /* ── CONVERSATION ── */
+    .chat-col {
+      padding: 3rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    #chat-messages {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding-bottom: 2rem;
+      min-height: 400px;
+    }
+
+    .msg {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: msgIn 0.4s ease forwards;
+    }
+
+    @keyframes msgIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .msg--ai .msg-avatar {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .msg--user .msg-avatar {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .msg--user {
+      flex-direction: row-reverse;
+    }
+
+    .msg-bubble {
+      max-width: 75%;
+      padding: 1.2rem 1.5rem;
+      border-radius: 2px;
+    }
+
+    .msg--ai .msg-bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .msg--user .msg-bubble {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .msg-bubble p {
+      font-family: var(--sans);
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .msg--ai .msg-bubble p { color: var(--text); }
+    .msg--user .msg-bubble p { color: var(--bg); }
+
+    /* Typing indicator */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 1rem 1.5rem;
+    }
+    .typing-indicator span {
+      width: 6px; height: 6px;
+      background: var(--muted);
+      border-radius: 50%;
+      animation: bounce 1.2s ease infinite;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+
+    /* Input */
+    .chat-input-wrap {
+      display: flex;
+      gap: 1rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    #chat-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.9rem 1.2rem;
+      font-family: var(--sans);
+      font-size: 0.9375rem;
+      color: var(--text);
+      resize: none;
+      min-height: 52px;
+      max-height: 140px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #chat-input:focus { border-color: var(--text); }
+    #chat-input::placeholder { color: var(--muted); }
+
+    #chat-send {
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      padding: 0 1.5rem;
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    #chat-send:hover { opacity: 0.8; }
+    #chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── BRIEF PANEL ── */
+    .brief-col {
+      padding: 3rem;
+      position: sticky;
+      top: 80px;
+      align-self: flex-start;
+    }
+
+    .brief-col h3 {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    #brief-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      gap: 1rem;
+      text-align: center;
+      color: var(--muted);
+    }
+    #brief-placeholder svg { opacity: 0.25; }
+    #brief-placeholder p {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    #brief-content {
+      display: none;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .brief-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .brief-field:last-child { border-bottom: none; }
+
+    .brief-field-label {
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .brief-field-value {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .brief-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+
+    .brief-actions .btn-primary {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-secondary {
+      display: block;
+      text-align: center;
+      padding: 0.8rem 1.5rem;
+      border: 1px solid var(--border);
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      color: var(--text);
+      cursor: pointer;
+      background: none;
+      transition: border-color 0.2s, background 0.2s;
+      text-decoration: none;
+    }
+    .btn-secondary:hover { border-color: var(--text); background: var(--surface); }
+
+    /* Progress */
+    .chat-progress {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 2rem;
+    }
+    .chat-progress-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+    .chat-progress-dot.active { background: var(--text); }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .brief-wrap { grid-template-columns: 1fr; }
+      .brief-col { display: none; }
+      .chat-col { padding: 1.5rem; }
+      .brief-hero { padding: 8rem 1.5rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav nav--light" id="nav">
+    <a href="index.html" class="nav-logo">
+      <img class="nav-logo-svg" src="assets/img/logo.png" alt="Po Tech Design">
+      <span class="nav-logo-text">Po Tech Design</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="index.html#projets">Projets</a>
+      <a href="index.html#prestations">Prestations</a>
+      <a href="actualites.html">Actualités</a>
+      <a href="brief.html" class="nav-cta">Créer mon brief →</a>
+    </nav>
+    <button class="nav-burger" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <!-- HERO -->
+  <section class="brief-hero">
+    <p class="label">Outil IA</p>
+    <h1>Générez votre<br><em>brief de projet.</em></h1>
+    <p>Notre assistant vous pose des questions ciblées pour construire un brief précis. En 5 minutes, votre projet prend forme.</p>
+  </section>
+
+  <!-- INTERFACE -->
+  <div class="brief-wrap">
+
+    <!-- COLONNE CONVERSATION -->
+    <div class="chat-col">
+
+      <div class="chat-progress" id="chat-progress">
+        <div class="chat-progress-dot active"></div>
+        <div class="chat-progress-dot"></div>
+        <div class="chat-progress-dot"></div>
+        <div class="chat-progress-dot"></div>
+        <div class="chat-progress-dot"></div>
+        <div class="chat-progress-dot"></div>
+        <div class="chat-progress-dot"></div>
+        <div class="chat-progress-dot"></div>
+        <div class="chat-progress-dot"></div>
+        <div class="chat-progress-dot"></div>
+      </div>
+
+      <div id="chat-messages"></div>
+
+      <div class="chat-input-wrap">
+        <textarea id="chat-input" placeholder="Votre réponse…" rows="1"></textarea>
+        <button id="chat-send">Envoyer →</button>
+      </div>
+    </div>
+
+    <!-- COLONNE BRIEF -->
+    <div class="brief-col">
+      <h3>Votre brief</h3>
+
+      <div id="brief-placeholder">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="6" width="32" height="36" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="14" y1="16" x2="34" y2="16" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="14" y1="22" x2="34" y2="22" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="14" y1="28" x2="26" y2="28" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <p>Votre brief apparaîtra ici<br>à la fin de la conversation.</p>
+      </div>
+
+      <div id="brief-content"></div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p class="footer-logo">Po Tech Design</p>
+        <p>Cabinet d'Architecture d'Intérieur<br>Bordeaux, France</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <p class="footer-col-title">Cabinet</p>
+          <a href="index.html">Accueil</a>
+          <a href="index.html#projets">Projets</a>
+          <a href="index.html#prestations">Prestations</a>
+          <a href="actualites.html">Actualités</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Contact</p>
+          <a href="contact.html">Nous contacter</a>
+          <a href="mailto:contact@potech-design.com">contact@potech-design.com</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Suivre</p>
+          <a href="https://www.instagram.com/">Instagram</a>
+          <a href="https://www.pinterest.fr/">Pinterest</a>
+          <a href="https://www.linkedin.com/company/potechdesign">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Bordeaux, France</span>
+      <span>© 2024 Po Tech Design</span>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    const API_URL = 'https://halston-api.vercel.app/api/brief';
+    const messagesEl = document.getElementById('chat-messages');
+    const inputEl = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send');
+    const briefContent = document.getElementById('brief-content');
+    const briefPlaceholder = document.getElementById('brief-placeholder');
+    const progressDots = document.querySelectorAll('.chat-progress-dot');
+
+    let history = [];
+    let exchangeCount = 0;
+
+    function addMessage(role, text) {
+      const msg = document.createElement('div');
+      msg.className = `msg msg--${role === 'assistant' ? 'ai' : 'user'}`;
+
+      const avatar = document.createElement('div');
+      avatar.className = 'msg-avatar';
+      avatar.textContent = role === 'assistant' ? 'AI' : 'Vous';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      bubble.innerHTML = `<p>${text.replace(/\n/g, '<br>')}</p>`;
+
+      msg.appendChild(avatar);
+      msg.appendChild(bubble);
+      messagesEl.appendChild(msg);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function showTyping() {
+      const div = document.createElement('div');
+      div.className = 'msg msg--ai';
+      div.id = 'typing';
+      div.innerHTML = `
+        <div class="msg-avatar">AI</div>
+        <div class="msg-bubble">
+          <div class="typing-indicator"><span></span><span></span><span></span></div>
+        </div>`;
+      messagesEl.appendChild(div);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function removeTyping() {
+      document.getElementById('typing')?.remove();
+    }
+
+    function updateProgress() {
+      exchangeCount++;
+      progressDots.forEach((dot, i) => {
+        dot.classList.toggle('active', i < exchangeCount);
+      });
+    }
+
+    function parseBrief(text) {
+      const match = text.match(/---BRIEF---([\s\S]*?)---FIN BRIEF---/);
+      if (!match) return null;
+
+      const fields = [];
+      const lines = match[1].trim().split('\n');
+      lines.forEach(line => {
+        const m = line.match(/\*\*(.+?)\s*:\*\*\s*(.+)/);
+        if (m) fields.push({ label: m[1], value: m[2].trim() });
+      });
+      return fields;
+    }
+
+    function renderBrief(fields) {
+      briefPlaceholder.style.display = 'none';
+      briefContent.style.display = 'flex';
+      briefContent.innerHTML = '';
+
+      fields.forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'brief-field';
+        div.innerHTML = `
+          <span class="brief-field-label">${f.label}</span>
+          <span class="brief-field-value">${f.value}</span>`;
+        briefContent.appendChild(div);
+      });
+
+      const actions = document.createElement('div');
+      actions.className = 'brief-actions';
+      actions.innerHTML = `
+        <a href="contact.html" class="btn-primary">Envoyer ce brief →</a>
+        <button class="btn-secondary" onclick="copyBrief()">Copier le brief</button>`;
+      briefContent.appendChild(actions);
+    }
+
+    function copyBrief() {
+      const lines = [...document.querySelectorAll('.brief-field')].map(f => {
+        const label = f.querySelector('.brief-field-label').textContent;
+        const value = f.querySelector('.brief-field-value').textContent;
+        return `${label} : ${value}`;
+      }).join('\n');
+      navigator.clipboard.writeText(lines).then(() => {
+        const btn = document.querySelector('.btn-secondary');
+        btn.textContent = 'Copié !';
+        setTimeout(() => btn.textContent = 'Copier le brief', 2000);
+      });
+    }
+
+    async function sendMessage(userText) {
+      if (!userText.trim()) return;
+
+      addMessage('user', userText);
+      history.push({ role: 'user', content: userText });
+
+      inputEl.value = '';
+      inputEl.style.height = 'auto';
+      sendBtn.disabled = true;
+      showTyping();
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: history }),
+        });
+        const data = await res.json();
+
+        removeTyping();
+
+        if (data.error) {
+          addMessage('assistant', 'Une erreur est survenue. Veuillez réessayer.');
+          sendBtn.disabled = false;
+          return;
+        }
+
+        const reply = data.reply;
+        history.push({ role: 'assistant', content: reply });
+
+        const briefFields = parseBrief(reply);
+        if (briefFields) {
+          const cleanText = reply.replace(/---BRIEF---[\s\S]*?---FIN BRIEF---/, '').trim();
+          if (cleanText) addMessage('assistant', cleanText);
+          renderBrief(briefFields);
+          sendBtn.disabled = true;
+          inputEl.placeholder = 'Brief généré — consultez le panneau de droite';
+        } else {
+          addMessage('assistant', reply);
+          updateProgress();
+          sendBtn.disabled = false;
+          inputEl.focus();
+        }
+      } catch (err) {
+        removeTyping();
+        addMessage('assistant', 'Connexion impossible. Vérifiez votre connexion et réessayez.');
+        sendBtn.disabled = false;
+      }
+    }
+
+    // Init : premier message de l'IA
+    async function init() {
+      sendBtn.disabled = true;
+      showTyping();
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: [{ role: 'user', content: 'Commence la conversation.' }] }),
+        });
+        const data = await res.json();
+        removeTyping();
+        if (data.reply) {
+          history.push({ role: 'assistant', content: data.reply });
+          addMessage('assistant', data.reply);
+        }
+      } catch {
+        removeTyping();
+        addMessage('assistant', 'Bonjour ! Je suis l\'assistant Po Tech Design. Quel type de projet souhaitez-vous réaliser ?');
+      }
+      sendBtn.disabled = false;
+      inputEl.focus();
+    }
+
+    // Events
+    sendBtn.addEventListener('click', () => sendMessage(inputEl.value));
+
+    inputEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage(inputEl.value);
+      }
+    });
+
+    inputEl.addEventListener('input', () => {
+      inputEl.style.height = 'auto';
+      inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
+    });
+
+    init();
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="assets/js/transitions.js"></script>
+</body>
+</html>
