@@ -375,6 +375,11 @@ a { color: inherit; text-decoration: none; }
 .sticky-content .label {
   margin-bottom: 1.2rem;
   color: var(--muted);
+  opacity: 0;
+}
+
+.sticky-title {
+  opacity: 0;
 }
 
 .sticky-title {

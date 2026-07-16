@@ -132,19 +132,20 @@ class StickyGridScroll {
   }
 
   animateTitleOnScroll() {
-    if (!this.title) return;
-    gsap.from(this.title, {
-      opacity: 0, duration: 0.7, ease: 'power1.out',
-      scrollTrigger: { trigger: this.block, start: 'top 57%', toggleActions: 'play none none reset' },
-    });
+    // géré par onUpdate dans animateGridOnScroll
   }
 
   showContent(show) {
-    if (!this.bottom) return;
-    gsap.to(this.bottom, {
+    const label = this.block?.querySelector('.label');
+    const targets = [label, this.title, this.bottom].filter(Boolean);
+    gsap.to(targets, {
       opacity: show ? 1 : 0,
+      y: show ? 0 : 10,
       pointerEvents: show ? 'all' : 'none',
-      duration: 0.5, overwrite: true,
+      duration: 0.6,
+      stagger: 0.08,
+      ease: 'power2.out',
+      overwrite: true,
     });
   }
 }
