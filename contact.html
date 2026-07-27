@@ -564,7 +564,24 @@
         });
         if (dbError) throw dbError;
 
-        // 3. Succès
+        // 3. Notification email
+        const formData = {
+          prenom:      document.getElementById('prenom').value,
+          nom:         document.getElementById('nom').value,
+          email:       document.getElementById('email').value,
+          telephone:   document.getElementById('telephone').value,
+          type_projet: document.getElementById('type').value,
+          message:     document.getElementById('message').value,
+          brief:       new URLSearchParams(window.location.search).get('brief') || null,
+          photos:      photoUrls,
+        };
+        await fetch('https://halston-api.vercel.app/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+
+        // 4. Succès
         feedback.className = 'form-feedback full success';
         feedback.textContent = 'Message envoyé ! Nous vous répondons sous 48h ouvrées.';
         feedback.style.display = 'block';
