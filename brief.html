@@ -13,7 +13,7 @@
     :root {
       --bg: #f5f3ef;
       --text: #1a1a18;
-      --muted: #8a8880;
+      --muted: #9a9790;
       --border: #e2dfd8;
       --accent: #b5926a;
       --serif: 'Cormorant Garamond', Georgia, serif;
@@ -32,10 +32,10 @@
     .progress-bar {
       position: fixed;
       top: 0; left: 0;
-      height: 2px;
+      height: 1.5px;
       background: var(--text);
       width: 0%;
-      transition: width 0.6s ease;
+      transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 100;
     }
 
@@ -46,7 +46,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1.5rem 2.5rem;
+      padding: 1.75rem 3rem;
       z-index: 50;
     }
 
@@ -58,10 +58,7 @@
       color: var(--text);
     }
 
-    .nav-logo img {
-      height: 28px;
-      width: auto;
-    }
+    .nav-logo img { height: 26px; width: auto; }
 
     .nav-logo-text {
       font-family: var(--sans);
@@ -71,200 +68,253 @@
       text-transform: uppercase;
     }
 
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav-counter {
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .nav-counter.visible { opacity: 1; }
+
     .nav-close {
       font-family: var(--sans);
-      font-size: 0.8125rem;
+      font-size: 12px;
       color: var(--muted);
       text-decoration: none;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       transition: color 0.2s;
     }
     .nav-close:hover { color: var(--text); }
 
-    /* ── SCREEN ── */
-    .screen {
+    /* ── VIEWPORT ── */
+    .viewport {
       position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* ── SLIDE ── */
+    .slide {
+      position: absolute;
       inset: 0;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
       justify-content: center;
-      padding: 6rem 10vw 4rem;
+      padding: 0 12vw;
+      will-change: transform, opacity;
+      /* position initiale : en dessous, invisible */
       opacity: 0;
+      transform: translateY(60px);
       pointer-events: none;
-      transform: translateY(30px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
-    .screen.active {
-      opacity: 1;
-      pointer-events: all;
-      transform: translateY(0);
+    /* ── INTRO ── */
+    #slide-intro {
+      gap: 0;
     }
 
-    .screen.exit {
-      opacity: 0;
-      transform: translateY(-30px);
-      transition: opacity 0.35s ease, transform 0.35s ease;
-    }
-
-    /* ── QUESTION ── */
-    .q-step {
+    .intro-label {
       font-family: var(--sans);
       font-size: 11px;
       font-weight: 500;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--muted);
+      margin-bottom: 2.5rem;
+    }
+
+    .intro-title {
+      font-family: var(--serif);
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
       margin-bottom: 2rem;
+    }
+
+    .intro-title em { font-style: italic; color: var(--accent); }
+
+    .intro-desc {
+      font-family: var(--sans);
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 420px;
+      margin-bottom: 3.5rem;
+    }
+
+    /* ── QUESTION ── */
+    #slide-question {
+      gap: 0;
+    }
+
+    .q-label {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3rem;
     }
 
     .q-text {
       font-family: var(--serif);
-      font-size: clamp(2rem, 4vw, 4rem);
+      font-size: clamp(2.2rem, 4.5vw, 5rem);
       font-weight: 300;
-      line-height: 1.2;
-      letter-spacing: -0.01em;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
       color: var(--text);
-      max-width: 800px;
-      margin-bottom: 3rem;
+      max-width: 820px;
+      margin-bottom: 3.5rem;
     }
 
-    .q-text em {
-      font-style: italic;
-      color: var(--accent);
+    .q-text em { font-style: italic; color: var(--accent); }
+
+    .q-input-wrap {
+      max-width: 580px;
+      margin-bottom: 2.5rem;
+      position: relative;
     }
 
-    /* ── INPUT ── */
     .q-input {
       width: 100%;
-      max-width: 640px;
       background: transparent;
       border: none;
-      border-bottom: 1.5px solid var(--border);
+      border-bottom: 1px solid var(--border);
       padding: 0.75rem 0;
+      padding-right: 3rem;
       font-family: var(--serif);
-      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
       font-weight: 300;
       color: var(--text);
       outline: none;
       transition: border-color 0.3s;
       caret-color: var(--accent);
     }
+
     .q-input:focus { border-color: var(--text); }
     .q-input::placeholder { color: var(--border); }
 
-    /* ── ACTIONS ── */
-    .q-actions {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-      margin-top: 2.5rem;
-    }
-
-    .btn-next {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      background: var(--text);
-      color: var(--bg);
+    .q-submit-inline {
+      position: absolute;
+      right: 0;
+      bottom: 0.6rem;
+      background: none;
       border: none;
-      padding: 0.9rem 2rem;
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 500;
       cursor: pointer;
-      transition: opacity 0.2s;
+      color: var(--muted);
+      font-size: 1.1rem;
+      transition: color 0.2s, transform 0.2s;
+      line-height: 1;
+      padding: 0.25rem;
     }
-    .btn-next:hover { opacity: 0.8; }
-    .btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
+    .q-submit-inline:hover { color: var(--text); transform: translateX(3px); }
 
-    .hint {
+    .q-hint {
       font-family: var(--sans);
-      font-size: 0.8125rem;
+      font-size: 12px;
       color: var(--muted);
     }
-    .hint kbd {
+    .q-hint kbd {
       font-family: var(--sans);
-      font-size: 0.75rem;
+      font-size: 11px;
       background: var(--border);
-      padding: 0.1em 0.4em;
+      padding: 0.15em 0.45em;
       border-radius: 2px;
     }
 
     /* ── LOADING ── */
-    #screen-loading {
-      display: flex;
-      flex-direction: column;
+    #slide-loading {
       align-items: flex-start;
-      gap: 1.5rem;
     }
 
-    .loading-label {
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+    .loading-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .loading-text {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 3vw, 3rem);
+      font-weight: 300;
       color: var(--muted);
+      font-style: italic;
     }
 
     .loading-dots {
       display: flex;
-      gap: 8px;
+      gap: 10px;
     }
+
     .loading-dots span {
-      width: 8px; height: 8px;
+      width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--text);
-      animation: ldot 1.2s ease infinite;
+      animation: ldot 1.4s ease infinite;
     }
-    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    .loading-dots span:nth-child(2) { animation-delay: 0.18s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.36s; }
+
     @keyframes ldot {
-      0%, 60%, 100% { opacity: 0.15; transform: scale(0.8); }
+      0%, 60%, 100% { opacity: 0.12; transform: scale(0.7); }
       30% { opacity: 1; transform: scale(1); }
     }
 
     /* ── BRIEF FINAL ── */
-    #screen-brief {
+    #slide-brief {
       overflow-y: auto;
-      padding-top: 7rem;
-      padding-bottom: 4rem;
-      align-items: flex-start;
       justify-content: flex-start;
+      padding-top: 8rem;
+      padding-bottom: 5rem;
     }
 
-    .brief-header {
-      margin-bottom: 3rem;
+    .brief-label {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
     }
 
-    .brief-header .q-step { margin-bottom: 1rem; }
-
-    .brief-header h2 {
+    .brief-title {
       font-family: var(--serif);
-      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-size: clamp(2.5rem, 5vw, 5rem);
       font-weight: 300;
-      line-height: 1.1;
+      line-height: 1.05;
       letter-spacing: -0.02em;
+      margin-bottom: 4rem;
     }
-    .brief-header h2 em { font-style: italic; color: var(--accent); }
+
+    .brief-title em { font-style: italic; color: var(--accent); }
 
     .brief-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0;
-      max-width: 800px;
+      max-width: 760px;
       border-top: 1px solid var(--border);
       margin-bottom: 3rem;
     }
 
     .brief-item {
-      padding: 1.5rem 0;
+      padding: 1.4rem 0;
       border-bottom: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
 
     .brief-item:nth-child(odd) { padding-right: 3rem; }
@@ -284,63 +334,70 @@
 
     .brief-item-value {
       font-family: var(--serif);
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 300;
       color: var(--text);
       line-height: 1.5;
     }
 
     .brief-resume {
-      max-width: 800px;
+      max-width: 760px;
       padding: 2rem 0;
       border-top: 1px solid var(--border);
       margin-bottom: 3rem;
     }
 
-    .brief-resume-label {
-      font-family: var(--sans);
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
+    .brief-resume .brief-item-label { margin-bottom: 0.75rem; }
 
     .brief-resume p {
       font-family: var(--serif);
       font-size: 1.2rem;
       font-weight: 300;
-      line-height: 1.7;
+      line-height: 1.75;
       color: var(--text);
     }
 
-    .brief-btns {
+    .brief-actions {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
     }
 
-    .btn-outline {
+    /* ── BUTTONS ── */
+    .btn {
       display: inline-flex;
       align-items: center;
+      gap: 0.5rem;
       padding: 0.9rem 2rem;
-      border: 1px solid var(--border);
       font-family: var(--sans);
       font-size: 0.875rem;
-      color: var(--text);
-      background: none;
+      font-weight: 500;
       cursor: pointer;
+      border: none;
       text-decoration: none;
-      transition: border-color 0.2s, background 0.2s;
+      transition: opacity 0.2s, background 0.2s, color 0.2s;
+      letter-spacing: 0.02em;
     }
-    .btn-outline:hover { border-color: var(--text); background: var(--bg); }
+
+    .btn-dark {
+      background: var(--text);
+      color: var(--bg);
+    }
+    .btn-dark:hover { opacity: 0.8; }
+
+    .btn-outline {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { border-color: var(--text); }
 
     @media (max-width: 640px) {
-      .screen { padding: 5rem 6vw 3rem; }
+      .slide { padding: 0 6vw; }
       .brief-grid { grid-template-columns: 1fr; }
       .brief-item:nth-child(even) { padding-left: 0; border-left: none; }
       .brief-item:nth-child(odd) { padding-right: 0; }
+      .nav { padding: 1.25rem 1.5rem; }
     }
   </style>
 </head>
@@ -353,133 +410,187 @@
       <img src="assets/img/logo.png" alt="Po Tech Design">
       <span class="nav-logo-text">Po Tech Design</span>
     </a>
-    <a href="index.html" class="nav-close">Quitter ✕</a>
+    <div class="nav-right">
+      <span class="nav-counter" id="nav-counter"></span>
+      <a href="index.html" class="nav-close">Quitter</a>
+    </div>
   </nav>
 
-  <!-- ÉCRAN INTRO -->
-  <div class="screen active" id="screen-intro">
-    <p class="q-step">Générateur de brief</p>
-    <h1 class="q-text">Parlons de votre<br><em>projet.</em></h1>
-    <p style="font-family:var(--sans);font-size:0.9375rem;color:var(--muted);max-width:480px;line-height:1.7;margin-bottom:2.5rem;">
-      Je vais vous poser quelques questions pour construire un brief précis. Comptez 5 minutes.
-    </p>
-    <div class="q-actions">
-      <button class="btn-next" id="btn-start">Commencer →</button>
-    </div>
-  </div>
+  <div class="viewport">
 
-  <!-- ÉCRAN QUESTION -->
-  <div class="screen" id="screen-question">
-    <p class="q-step" id="q-step-label">Question 1</p>
-    <p class="q-text" id="q-text">…</p>
-    <input class="q-input" type="text" id="q-input" placeholder="Votre réponse…" autocomplete="off">
-    <div class="q-actions">
-      <button class="btn-next" id="btn-send">Continuer →</button>
-      <span class="hint">ou <kbd>Entrée</kbd></span>
+    <!-- INTRO -->
+    <div class="slide" id="slide-intro">
+      <p class="intro-label">Générateur de brief</p>
+      <h1 class="intro-title">Parlons de<br>votre <em>projet.</em></h1>
+      <p class="intro-desc">Je vais vous poser quelques questions pour construire un brief précis. Comptez 5 à 10 minutes.</p>
+      <div>
+        <button class="btn btn-dark" id="btn-start">Commencer →</button>
+      </div>
     </div>
-  </div>
 
-  <!-- ÉCRAN CHARGEMENT -->
-  <div class="screen" id="screen-loading">
-    <p class="loading-label">Po Tech Design analyse votre projet…</p>
-    <div class="loading-dots"><span></span><span></span><span></span></div>
-  </div>
+    <!-- QUESTION -->
+    <div class="slide" id="slide-question">
+      <p class="q-label" id="q-label">Question 1</p>
+      <p class="q-text" id="q-text"></p>
+      <div class="q-input-wrap">
+        <input class="q-input" id="q-input" type="text" placeholder="Votre réponse…" autocomplete="off">
+        <button class="q-submit-inline" id="btn-inline-send" aria-label="Envoyer">→</button>
+      </div>
+      <p class="q-hint">Appuyez sur <kbd>Entrée</kbd> pour continuer</p>
+    </div>
 
-  <!-- ÉCRAN BRIEF FINAL -->
-  <div class="screen" id="screen-brief">
-    <div class="brief-header">
-      <p class="q-step">Votre brief</p>
-      <h2>Votre projet<br><em>en un coup d'œil.</em></h2>
+    <!-- LOADING -->
+    <div class="slide" id="slide-loading">
+      <div class="loading-wrap">
+        <p class="loading-text">Analyse en cours…</p>
+        <div class="loading-dots"><span></span><span></span><span></span></div>
+      </div>
     </div>
-    <div class="brief-grid" id="brief-grid"></div>
-    <div class="brief-resume" id="brief-resume"></div>
-    <div class="brief-btns">
-      <a href="contact.html" class="btn-next">Envoyer ce brief →</a>
-      <button class="btn-outline" id="btn-copy">Copier</button>
-      <button class="btn-outline" id="btn-restart">Recommencer</button>
+
+    <!-- BRIEF -->
+    <div class="slide" id="slide-brief">
+      <p class="brief-label">Votre brief</p>
+      <h2 class="brief-title">Votre projet<br><em>en un coup d'œil.</em></h2>
+      <div class="brief-grid" id="brief-grid"></div>
+      <div class="brief-resume" id="brief-resume"></div>
+      <div class="brief-actions">
+        <a href="contact.html" class="btn btn-dark">Envoyer ce brief →</a>
+        <button class="btn btn-outline" id="btn-copy">Copier</button>
+        <button class="btn btn-outline" id="btn-restart">Recommencer</button>
+      </div>
     </div>
+
   </div>
 
   <script>
     const API_URL = 'https://halston-api.vercel.app/api/brief';
 
-    const screens = {
-      intro: document.getElementById('screen-intro'),
-      question: document.getElementById('screen-question'),
-      loading: document.getElementById('screen-loading'),
-      brief: document.getElementById('screen-brief'),
+    const slides = {
+      intro:    document.getElementById('slide-intro'),
+      question: document.getElementById('slide-question'),
+      loading:  document.getElementById('slide-loading'),
+      brief:    document.getElementById('slide-brief'),
     };
 
-    const progressBar = document.getElementById('progress-bar');
-    const qStepLabel = document.getElementById('q-step-label');
-    const qText = document.getElementById('q-text');
-    const qInput = document.getElementById('q-input');
-    const btnSend = document.getElementById('btn-send');
-    const btnStart = document.getElementById('btn-start');
+    const progressBar  = document.getElementById('progress-bar');
+    const navCounter   = document.getElementById('nav-counter');
+    const qLabel       = document.getElementById('q-label');
+    const qText        = document.getElementById('q-text');
+    const qInput       = document.getElementById('q-input');
 
     let history = [];
     let questionCount = 0;
-    const MAX_Q = 20;
+    let current = 'intro';
 
-    function showScreen(name) {
-      Object.entries(screens).forEach(([k, el]) => {
-        if (k === name) {
-          el.classList.remove('exit');
-          el.classList.add('active');
-        } else if (el.classList.contains('active')) {
-          el.classList.add('exit');
-          setTimeout(() => {
-            el.classList.remove('active', 'exit');
-          }, 350);
-        }
+    // ── Init : affiche l'intro directement ──
+    function show(el) {
+      el.style.transition = 'none';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+      el.style.pointerEvents = 'all';
+    }
+    function hide(el) {
+      el.style.transition = 'none';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(60px)';
+      el.style.pointerEvents = 'none';
+    }
+    // Init
+    show(slides.intro);
+
+    // ── Transitions ──
+    function goTo(name) {
+      if (current === name) return;
+      const prev = slides[current];
+      const next = slides[name];
+      current = name;
+
+      // Sortie : monte et disparaît
+      prev.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      prev.style.opacity = '0';
+      prev.style.transform = 'translateY(-40px)';
+      prev.style.pointerEvents = 'none';
+
+      // Positionne le suivant en bas, sans transition
+      next.style.transition = 'none';
+      next.style.opacity = '0';
+      next.style.transform = 'translateY(60px)';
+      next.style.pointerEvents = 'none';
+
+      // Force reflow puis anime l'entrée
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          next.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+          next.style.opacity = '1';
+          next.style.transform = 'translateY(0)';
+          next.style.pointerEvents = 'all';
+        });
       });
     }
 
-    function setProgress(n) {
-      progressBar.style.width = `${Math.min(n, 100)}%`;
+    function setProgress(pct) {
+      progressBar.style.width = `${Math.min(pct, 100)}%`;
     }
 
-    function parseMarkdown(text) {
-      return text
+    function parseMarkdown(t) {
+      return t
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.+?)\*/g, '<em>$1</em>');
     }
 
     function parseBrief(text) {
-      const match = text.match(/---BRIEF---([\s\S]*?)---FIN BRIEF---/);
-      if (!match) return null;
+      const m = text.match(/---BRIEF---([\s\S]*?)---FIN BRIEF---/);
+      if (!m) return null;
       const fields = [];
-      match[1].trim().split('\n').forEach(line => {
-        const m = line.match(/\*\*(.+?)\s*:\*\*\s*(.+)/);
-        if (m) fields.push({ label: m[1].trim(), value: m[2].trim() });
+      m[1].trim().split('\n').forEach(line => {
+        const r = line.match(/\*\*(.+?)\s*:\*\*\s*(.+)/);
+        if (r) fields.push({ label: r[1].trim(), value: r[2].trim() });
       });
       return fields;
     }
 
     function renderBrief(fields) {
-      const grid = document.getElementById('brief-grid');
+      const grid   = document.getElementById('brief-grid');
       const resume = document.getElementById('brief-resume');
       grid.innerHTML = '';
       resume.innerHTML = '';
 
       fields.forEach(f => {
         if (f.label === 'Résumé') {
-          resume.innerHTML = `<p class="brief-resume-label">Résumé</p><p>${f.value}</p>`;
+          resume.innerHTML = `
+            <p class="brief-item-label">Résumé</p>
+            <p>${f.value}</p>`;
         } else {
-          const div = document.createElement('div');
-          div.className = 'brief-item';
-          div.innerHTML = `<span class="brief-item-label">${f.label}</span><span class="brief-item-value">${f.value}</span>`;
-          grid.appendChild(div);
+          const d = document.createElement('div');
+          d.className = 'brief-item';
+          d.innerHTML = `
+            <span class="brief-item-label">${f.label}</span>
+            <span class="brief-item-value">${f.value}</span>`;
+          grid.appendChild(d);
         }
       });
 
-      showScreen('brief');
       setProgress(100);
+      navCounter.classList.remove('visible');
+      goTo('brief');
+    }
+
+    function showQuestion(reply) {
+      questionCount++;
+      const pct = Math.min((questionCount / 15) * 88, 88);
+      setProgress(pct);
+      navCounter.textContent = `${questionCount}`;
+      navCounter.classList.add('visible');
+      qLabel.textContent = `Question ${questionCount}`;
+      qText.innerHTML = parseMarkdown(reply);
+      qInput.value = '';
+      goTo('question');
+      setTimeout(() => qInput.focus(), 700);
     }
 
     async function sendMessage(userText) {
       history.push({ role: 'user', content: userText });
-      showScreen('loading');
+      goTo('loading');
 
       try {
         const res = await fetch(API_URL, {
@@ -488,7 +599,6 @@
           body: JSON.stringify({ messages: history }),
         });
         const data = await res.json();
-
         if (data.error) throw new Error(data.error);
 
         const reply = data.reply;
@@ -498,23 +608,15 @@
         if (brief) {
           renderBrief(brief);
         } else {
-          questionCount++;
-          setProgress((questionCount / MAX_Q) * 90);
-          qStepLabel.textContent = `Question ${questionCount}`;
-          qText.innerHTML = parseMarkdown(reply);
-          qInput.placeholder = 'Votre réponse…';
-          qInput.value = '';
-          showScreen('question');
-          setTimeout(() => qInput.focus(), 400);
+          showQuestion(reply);
         }
-      } catch (err) {
-        qText.innerHTML = 'Une erreur est survenue. Veuillez réessayer.';
-        showScreen('question');
+      } catch {
+        showQuestion('Une erreur est survenue. Voulez-vous réessayer ?');
       }
     }
 
-    async function startConversation() {
-      showScreen('loading');
+    async function start() {
+      goTo('loading');
       try {
         const res = await fetch(API_URL, {
           method: 'POST',
@@ -523,17 +625,9 @@
         });
         const data = await res.json();
         history.push({ role: 'assistant', content: data.reply });
-
-        questionCount = 1;
-        setProgress(5);
-        qStepLabel.textContent = 'Question 1';
-        qText.innerHTML = parseMarkdown(data.reply);
-        qInput.placeholder = 'Votre réponse…';
-        qInput.value = '';
-        showScreen('question');
-        setTimeout(() => qInput.focus(), 400);
+        showQuestion(data.reply);
       } catch {
-        showScreen('intro');
+        goTo('intro');
       }
     }
 
@@ -543,22 +637,21 @@
       sendMessage(val);
     }
 
-    btnStart.addEventListener('click', startConversation);
-    btnSend.addEventListener('click', handleSend);
+    // ── Events ──
+    document.getElementById('btn-start').addEventListener('click', start);
+    document.getElementById('btn-inline-send').addEventListener('click', handleSend);
 
     qInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); handleSend(); }
     });
 
     document.getElementById('btn-copy').addEventListener('click', () => {
-      const items = [...document.querySelectorAll('.brief-item')].map(el => {
-        const label = el.querySelector('.brief-item-label').textContent;
-        const value = el.querySelector('.brief-item-value').textContent;
-        return `${label} : ${value}`;
-      });
-      const resume = document.querySelector('#brief-resume p:last-child')?.textContent;
-      if (resume) items.push(`Résumé : ${resume}`);
-      navigator.clipboard.writeText(items.join('\n')).then(() => {
+      const lines = [...document.querySelectorAll('.brief-item')].map(el =>
+        `${el.querySelector('.brief-item-label').textContent} : ${el.querySelector('.brief-item-value').textContent}`
+      );
+      const res = document.querySelector('#brief-resume p:last-child')?.textContent;
+      if (res) lines.push(`Résumé : ${res}`);
+      navigator.clipboard.writeText(lines.join('\n')).then(() => {
         const btn = document.getElementById('btn-copy');
         btn.textContent = 'Copié !';
         setTimeout(() => btn.textContent = 'Copier', 2000);
@@ -569,7 +662,8 @@
       history = [];
       questionCount = 0;
       setProgress(0);
-      showScreen('intro');
+      navCounter.classList.remove('visible');
+      goTo('intro');
     });
   </script>
 </body>
