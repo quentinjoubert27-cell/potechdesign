@@ -570,6 +570,16 @@
         }
       });
 
+      // Construire le texte du brief pour le pré-remplissage
+      const briefText = fields.map(f => `${f.label} : ${f.value}`).join('\n');
+      window._briefText = briefText;
+
+      // Mettre à jour le lien "Envoyer ce brief"
+      const sendLink = document.querySelector('.brief-actions a.btn');
+      if (sendLink) {
+        sendLink.href = 'contact.html?brief=' + encodeURIComponent(briefText);
+      }
+
       setProgress(100);
       navCounter.classList.remove('visible');
       goTo('brief');
