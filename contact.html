@@ -164,6 +164,84 @@
       line-height: 1.5;
     }
 
+    /* Upload zone */
+    .upload-zone {
+      border: 1px dashed var(--border);
+      padding: 2rem;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .upload-zone.drag-over {
+      border-color: var(--text);
+      background: var(--surface);
+    }
+    .upload-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .upload-placeholder span {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+    }
+    .upload-placeholder button {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .upload-placeholder small {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .upload-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .upload-preview-item {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+    .upload-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .upload-preview-item button {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 20px;
+      height: 20px;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: 50%;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .form-feedback {
+      padding: 1rem 1.5rem;
+      font-family: var(--sans);
+      font-size: 0.9rem;
+    }
+    .form-feedback.success { background: #f0faf4; color: #2d7a4f; border: 1px solid #b7e4c7; }
+    .form-feedback.error { background: #fff0f0; color: #c0392b; border: 1px solid #f5c6c6; }
+
     /* Bande localisation */
     .contact-location {
       padding: 3rem;
@@ -273,7 +351,7 @@
 
       <h2>Décrivez-nous<br><em>votre projet.</em></h2>
 
-      <form class="form-grid" action="#" method="post" novalidate>
+      <form class="form-grid" id="contact-form" novalidate>
 
         <div class="form-field">
           <label for="prenom">Prénom</label>
@@ -307,15 +385,30 @@
           </select>
         </div>
 
-<div class="form-field full">
+        <div class="form-field full">
           <label for="message">Votre message</label>
           <textarea id="message" name="message" placeholder="Décrivez votre projet, vos envies, votre calendrier…"></textarea>
         </div>
 
+        <div class="form-field full">
+          <label for="photos">Photos de référence ou de l'espace actuel</label>
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" id="photos" name="photos" multiple accept="image/*" style="display:none">
+            <div class="upload-placeholder" id="upload-placeholder">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Glissez vos photos ou <button type="button" onclick="document.getElementById('photos').click()">parcourir</button></span>
+              <small>JPG, PNG — 10 Mo max par photo</small>
+            </div>
+            <div class="upload-preview" id="upload-preview"></div>
+          </div>
+        </div>
+
         <div class="form-submit full">
-          <button type="submit" class="btn-primary">Envoyer →</button>
+          <button type="submit" class="btn-primary" id="btn-submit">Envoyer →</button>
           <p>Nous vous répondons sous 48 h ouvrées. Toutes vos données restent confidentielles.</p>
         </div>
+
+        <div class="form-feedback full" id="form-feedback" style="display:none"></div>
 
       </form>
     </div>
@@ -392,5 +485,103 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="assets/js/page-animations.js"></script>
   <script src="assets/js/transitions.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://urbfwejvpvajvwoxvvcy.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyYmZ3ZWp2cHZhanZ3b3h2dmN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxNTYxMTYsImV4cCI6MjEwMDczMjExNn0.6LMbwYnj-Pl0HvlWU4n7FgOqyy4SmEe9Q5k436LzSS0';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let selectedFiles = [];
+
+    const photoInput   = document.getElementById('photos');
+    const uploadZone   = document.getElementById('upload-zone');
+    const uploadPreview = document.getElementById('upload-preview');
+    const form         = document.getElementById('contact-form');
+    const btnSubmit    = document.getElementById('btn-submit');
+    const feedback     = document.getElementById('form-feedback');
+
+    // ── Drag & drop ──
+    uploadZone.addEventListener('click', () => photoInput.click());
+    uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+    uploadZone.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      addFiles([...e.dataTransfer.files]);
+    });
+    photoInput.addEventListener('change', () => addFiles([...photoInput.files]));
+
+    function addFiles(files) {
+      files.forEach(f => {
+        if (!f.type.startsWith('image/') || selectedFiles.find(x => x.name === f.name)) return;
+        selectedFiles.push(f);
+        const item = document.createElement('div');
+        item.className = 'upload-preview-item';
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(f);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = '✕';
+        btn.onclick = () => {
+          selectedFiles = selectedFiles.filter(x => x.name !== f.name);
+          item.remove();
+        };
+        item.appendChild(img);
+        item.appendChild(btn);
+        uploadPreview.appendChild(item);
+      });
+    }
+
+    // ── Soumission ──
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Envoi en cours…';
+      feedback.style.display = 'none';
+
+      try {
+        // 1. Upload des photos
+        const photoUrls = [];
+        for (const file of selectedFiles) {
+          const ext = file.name.split('.').pop();
+          const path = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+          const { error } = await sb.storage.from('photos').upload(path, file);
+          if (error) throw error;
+          const { data } = sb.storage.from('photos').getPublicUrl(path);
+          photoUrls.push(data.publicUrl);
+        }
+
+        // 2. Enregistrement dans la table contacts
+        const { error: dbError } = await sb.from('contacts').insert({
+          prenom:       document.getElementById('prenom').value,
+          nom:          document.getElementById('nom').value,
+          email:        document.getElementById('email').value,
+          telephone:    document.getElementById('telephone').value,
+          type_projet:  document.getElementById('type').value,
+          message:      document.getElementById('message').value,
+          brief:        new URLSearchParams(window.location.search).get('brief') || null,
+          photos:       photoUrls,
+        });
+        if (dbError) throw dbError;
+
+        // 3. Succès
+        feedback.className = 'form-feedback full success';
+        feedback.textContent = 'Message envoyé ! Nous vous répondons sous 48h ouvrées.';
+        feedback.style.display = 'block';
+        form.reset();
+        selectedFiles = [];
+        uploadPreview.innerHTML = '';
+        btnSubmit.textContent = 'Envoyé ✓';
+
+      } catch (err) {
+        console.error(err);
+        feedback.className = 'form-feedback full error';
+        feedback.textContent = 'Une erreur est survenue. Veuillez réessayer ou nous contacter par email.';
+        feedback.style.display = 'block';
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Envoyer →';
+      }
+    });
+  </script>
 </body>
 </html>
