@@ -585,6 +585,16 @@
       goTo('brief');
     }
 
+    function parseReply(reply) {
+      // Tente de parser le JSON {"q":"...","ex":"..."}
+      try {
+        const json = JSON.parse(reply.trim());
+        if (json.q) return { question: json.q, example: json.ex || '' };
+      } catch {}
+      // Fallback : texte brut
+      return { question: reply, example: '' };
+    }
+
     function showQuestion(reply) {
       questionCount++;
       const pct = Math.min((questionCount / 15) * 88, 88);
@@ -592,7 +602,9 @@
       navCounter.textContent = `${questionCount}`;
       navCounter.classList.add('visible');
       qLabel.textContent = `Question ${questionCount}`;
-      qText.innerHTML = parseMarkdown(reply);
+      const { question, example } = parseReply(reply);
+      qText.innerHTML = parseMarkdown(question);
+      qInput.placeholder = example || 'Votre réponse…';
       qInput.value = '';
       goTo('question');
       setTimeout(() => qInput.focus(), 700);
